@@ -3,11 +3,10 @@ cmake_minimum_required(VERSION 3.4.1)
 
 # Define the library to be built
 add_library(native-lib SHARED
-            textureCube/shaders/Shader.h
             textureCube/shaders/Shader.cpp
-            textureCube/TextureCubeRenderer.h
             textureCube/TextureCubeRenderer.cpp
-            Renderer.h
+            stb_image.h
+            utils.h
             native-lib.cpp
 )
 

@@ -22,7 +22,9 @@ bool TextureCubeRenderer::setupGraphics(int width, int height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
 
-    textureId = loadSimpleTexture();
+    //textureId = loadSimpleTexture();
+    textureId = loadTextureFromAsset(assetManager, "texture/grass.jpg");
+
     //return true;
     if(textureId == 0)
     {
