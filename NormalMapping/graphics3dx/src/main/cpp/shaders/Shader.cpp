@@ -25,13 +25,17 @@ Shader::Shader(AAssetManager *assetManager, const std::string &vertexPath,
         return;
     }
 
-    vertexPositionLocation = glGetAttribLocation(program, VERTEX_POSITION_ATTRIBUTE_NAME);
-    vertexTextureCordsLocation = glGetAttribLocation(program, VERTEX_TEXTURE_CORDS_ATTRIBUTE_NAME);
-    vertexColourLocation = glGetAttribLocation(program, VERTEX_COLOUR_ATTRIBUTE_NAME);
+    vertexLocation = glGetAttribLocation(program, VERTEX_POSITION_ATTRIBUTE_NAME);
+    textureCordLocation = glGetAttribLocation(program, VERTEX_TEXTURE_CORDS_ATTRIBUTE_NAME);
+    colorLocation = glGetAttribLocation(program, VERTEX_COLOUR_ATTRIBUTE_NAME);
     vertexNormalLocation = glGetAttribLocation(program, VERTEX_NORMAL_ATTRIBUTE_NAME);
+    tangentLocation = glGetAttribLocation(program, VERTEX_TANGENT_ATTRIBUTE_NAME);
+    biNormalLocation = glGetAttribLocation(program, VERTEX_BI_NORMAL_ATTRIBUTE_NAME);
+
+    samplerLocation = glGetUniformLocation(program, UNIFORM_TEXTURE_NAME);
     projectionLocation = glGetUniformLocation(program, UNIFORM_PROJECTION_NAME);
     modelViewLocation = glGetUniformLocation(program, UNIFORM_MODEL_VIEW_NAME);
-    samplerLocation = glGetUniformLocation(program, UNIFORM_TEXTURE_NAME);
+
 
 }
 
@@ -133,25 +137,29 @@ void Shader::use() {
 
 }
 
-//void Shader::setupAttributes(const GLfloat *vertexData, const GLfloat *colorData, const GLfloat *normalData) {
-//
-//    glVertexAttribPointer(vertexPositionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertexData);
-//    glEnableVertexAttribArray(vertexPositionLocation);
-//    glVertexAttribPointer(vertexColourLocation, 3, GL_FLOAT, GL_FALSE, 0, colorData);
-//    glEnableVertexAttribArray(vertexColourLocation);
-//    glVertexAttribPointer(vertexNormalLocation, 3, GL_FLOAT, GL_FALSE, 0, normalData);
-//    glEnableVertexAttribArray(vertexNormalLocation);
-//
-//}
 
-void Shader::setupAttributes(const GLfloat* vertexData, const GLfloat* textureData, const GLfloat* normalData) {
+void Shader::setupAttributes(
+        const GLfloat* cubeVertices,
+        const GLfloat* textureCords,
+        const GLfloat* colour,
+        const GLfloat* normals,
+        const GLfloat* biNormals,
+        const GLfloat* tangents
+        ) {
 
-    glVertexAttribPointer(vertexPositionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertexData);
-    glEnableVertexAttribArray(vertexPositionLocation);
-    glVertexAttribPointer(vertexTextureCordsLocation, 2, GL_FLOAT, GL_FALSE, 0, textureData);
-    glEnableVertexAttribArray(vertexTextureCordsLocation);
-    glVertexAttribPointer(vertexNormalLocation, 3, GL_FLOAT, GL_FALSE, 0, normalData);
+
+    glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, cubeVertices);
+    glEnableVertexAttribArray(vertexLocation);
+    glVertexAttribPointer(textureCordLocation, 2, GL_FLOAT, GL_FALSE, 0, textureCords);
+    glEnableVertexAttribArray(textureCordLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, 0, colour);
+    glEnableVertexAttribArray(colorLocation);
+    glVertexAttribPointer(vertexNormalLocation, 3, GL_FLOAT, GL_FALSE, 0, normals);
     glEnableVertexAttribArray(vertexNormalLocation);
+    glVertexAttribPointer(biNormalLocation, 3, GL_FLOAT, GL_FALSE, 0, biNormals);
+    glEnableVertexAttribArray(biNormalLocation);
+    glVertexAttribPointer(tangentLocation, 3, GL_FLOAT, GL_FALSE, 0, tangents);
+    glEnableVertexAttribArray(tangentLocation);
 
 }
 

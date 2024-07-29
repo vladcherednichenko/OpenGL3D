@@ -23,7 +23,7 @@ bool TextureCubeRenderer::setupGraphics(int width, int height)
     glViewport(0, 0, width, height);
 
     //textureId = loadSimpleTexture();
-    textureId = loadTextureFromAsset(assetManager, "texture/grass.jpg");
+    textureId = loadNormalMapTexture(assetManager, "texture/normalMap256.raw");
 
     //return true;
     if(textureId == 0)
@@ -46,7 +46,13 @@ void TextureCubeRenderer::update() {
     modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 
     shader->use();
-    shader->setupAttributes(cubeVertices, textureCords, cubeNormals);
+    shader->setupAttributes(
+            cubeVertices,
+            textureCords,
+            colour,
+            normals,
+            biNormals,
+            tangents);
     shader->setupUniforms(projectMatrix, modelViewMatrix);
     angle += 1;
     if (angle > 360)
@@ -61,7 +67,7 @@ void TextureCubeRenderer::onDrawFrame() {
     update();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, &indices);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, &indicies);
 
 }
 

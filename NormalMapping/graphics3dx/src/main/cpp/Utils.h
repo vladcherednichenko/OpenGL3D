@@ -15,94 +15,157 @@
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 
-static const GLfloat cubeVertices[24*3] = {
-        -1.0f,  1.0f, -1.0f, /* Back. */
-        1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f, /* Front. */
-        1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f, /* Left. */
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f, -1.0f, /* Right. */
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        -1.0f, 1.0f, -1.0f, /* Top. */
-        -1.0f, 1.0f,  1.0f,
-        1.0f, 1.0f,  1.0f,
-        1.0f, 1.0f, -1.0f,
-        -1.0f, - 1.0f, -1.0f, /* Bottom. */
-        -1.0f,  -1.0f,  1.0f,
-        1.0f, - 1.0f,  1.0f,
-        1.0f,  -1.0f, -1.0f
+static GLfloat cubeVertices[] = {-1.0f,  1.0f, -1.0f, /* Back. */
+                          1.0f,  1.0f, -1.0f,
+                          -1.0f, -1.0f, -1.0f,
+                          1.0f, -1.0f, -1.0f,
+                          -1.0f,  1.0f,  1.0f, /* Front. */
+                          1.0f,  1.0f,  1.0f,
+                          -1.0f, -1.0f,  1.0f,
+                          1.0f, -1.0f,  1.0f,
+                          -1.0f,  1.0f, -1.0f, /* Left. */
+                          -1.0f, -1.0f, -1.0f,
+                          -1.0f, -1.0f,  1.0f,
+                          -1.0f,  1.0f,  1.0f,
+                          1.0f,  1.0f, -1.0f, /* Right. */
+                          1.0f, -1.0f, -1.0f,
+                          1.0f, -1.0f,  1.0f,
+                          1.0f,  1.0f,  1.0f,
+                          -1.0f, 1.0f, -1.0f, /* Top. */
+                          -1.0f, 1.0f,  1.0f,
+                          1.0f, 1.0f,  1.0f,
+                          1.0f, 1.0f, -1.0f,
+                          -1.0f, - 1.0f, -1.0f, /* Bottom. */
+                          -1.0f,  -1.0f,  1.0f,
+                          1.0f, - 1.0f,  1.0f,
+                          1.0f,  -1.0f, -1.0f
 };
-
-
-static const GLfloat textureCords[24*2] = {
-        0.75f, 0.333f, /* Back. */
-        0.5f, 0.333f,
-        0.75f, 0.666f,
-        0.5f, 0.666f,
-
-        0.0f, 0.333f, /* Front. */
-        0.25f, 0.333f,
-        0.0f, 0.666f,
-        0.25f, 0.666f,
-
-        0.75f, 0.333f, /* Left. */
-        0.75f, 0.666f,
-        1.0f, 0.666f,
-        1.0f, 0.333f,
-
-        0.5f, 0.333f, /* Right. */
-        0.5f, 0.666f,
-        0.25f, 0.666f,
-        0.25f, 0.333f,
-
-        0.25f, 0.0f, /* Top. */
-        0.25f, 0.333f,
-        0.5f, 0.333f,
-        0.5f, 0.0f,
-
-        0.25f, 1.0f, /* Bottom. */
-        0.25f, 0.666f,
-        0.5f, 0.666f,
-        0.5f, 1.0f
+static GLfloat normals[] =     {0.0f, 0.0f, -1.0f,            /* Back */
+                         0.0f, 0.0f, -1.0f,
+                         0.0f, 0.0f, -1.0f,
+                         0.0f, 0.0f, -1.0f,
+                         0.0f, 0.0f, 1.0f,            /* Front */
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         -1.0f, 0.0, 0.0f,            /* Left */
+                         -1.0f, 0.0f, 0.0f,
+                         -1.0f, 0.0f, 0.0f,
+                         -1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,             /* Right */
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,             /* Top */
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, -1.0f, 0.0f,            /* Bottom */
+                         0.0f, -1.0f, 0.0f,
+                         0.0f, -1.0f, 0.0f,
+                         0.0f, -1.0f, 0.0f
 };
-
-static const GLushort indices[36] = {0, 2, 3, 0, 1, 3, 4, 6, 7, 4, 5, 7, 8, 9, 10, 11, 8, 10, 12, 13, 14, 15, 12, 14, 16, 17, 18, 16, 19, 18, 20, 21, 22, 20, 23, 22};
-
-static const GLfloat cubeNormals[24*3] = {
-        0.0f, 0.0f, -1.0f, /* Back. */
-        0.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, 1.0f, /* Front. */
-        0.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f,
-        -1.0f, 0.0f, 0.0f, /* Left. */
-        -1.0f, 0.0f, 0.0f,
-        -1.0f, 0.0f, 0.0f,
-        -1.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f, /* Right. */
-        1.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, /* Top. */
-        0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, -1.0f, 0.0f, /* Bottom. */
-        0.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 0.0f
+static GLfloat colour[] =      {1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f,
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         1.0f, 1.0f, 0.0f,
+                         1.0f, 1.0f, 0.0f,
+                         1.0f, 1.0f, 0.0f,
+                         1.0f, 1.0f, 0.0f,
+                         0.0f, 1.0f, 1.0f,
+                         0.0f, 1.0f, 1.0f,
+                         0.0f, 1.0f, 1.0f,
+                         0.0f, 1.0f, 1.0f,
+                         1.0f, 0.0f, 1.0f,
+                         1.0f, 0.0f, 1.0f,
+                         1.0f, 0.0f, 1.0f,
+                         1.0f, 0.0f, 1.0f
 };
+static GLfloat tangents[] =    {-1.0f, 0.0f, 0.0f,            /* Back */
+                         -1.0f, 0.0f, 0.0f,
+                         -1.0f, 0.0f, 0.0f,
+                         -1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,                /* Front */
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         0.0f, 0.0f, 1.0f,                /* Left */
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, 1.0f,
+                         0.0f, 0.0f, -1.0f,                /* Right */
+                         0.0f, 0.0f, -1.0f,
+                         0.0f, 0.0f, -1.0f,
+                         0.0f, 0.0f, -1.0f,
+                         1.0f, 0.0f, 0.0f,                /* Top */
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,                /* Bottom */
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f,
+                         1.0f, 0.0f, 0.0f
+};
+static GLfloat biNormals[] = {    0.0f, 1.0f, 0.0f,                /* Back */
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,                /* Front */
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,                /* Left */
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,                 /* Right */
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 1.0f, 0.0f,
+                           0.0f, 0.0f, -1.0f,                /* Top */
+                           0.0f, 0.0f, -1.0f,
+                           0.0f, 0.0f, -1.0f,
+                           0.0f, 0.0f, -1.0f,
+                           0.0f, 0.0f, 1.0f,                /* Bottom */
+                           0.0f, 0.0f, 1.0f,
+                           0.0f, 0.0f, 1.0f,
+                           0.0f, 0.0f, 1.0f
+};
+static GLfloat textureCords[] = {1.0f, 1.0f, /* Back. */
+                          0.0f, 1.0f,
+                          1.0f, 0.0f,
+                          0.0f, 0.0f,
+                          0.0f, 1.0f, /* Front. */
+                          1.0f, 1.0f,
+                          0.0f, 0.0f,
+                          1.0f, 0.0f,
+                          0.0f, 1.0f, /* Left. */
+                          0.0f, 0.0f,
+                          1.0f, 0.0f,
+                          1.0f, 1.0f,
+                          1.0f, 1.0f, /* Right. */
+                          1.0f, 0.0f,
+                          0.0f, 0.0f,
+                          0.0f, 1.0f,
+                          0.0f, 1.0f, /* Top. */
+                          0.0f, 0.0f,
+                          1.0f, 0.0f,
+                          1.0f, 1.0f,
+                          0.0f, 0.0f, /* Bottom. */
+                          0.0f, 1.0f,
+                          1.0f, 1.0f,
+                          1.0f, 0.0f
+};
+static GLushort indicies[] = {0, 3, 2, 0, 1, 3, 4, 6, 7, 4, 7, 5,  8, 9, 10, 8, 11, 10, 12, 13, 14, 15, 12, 14, 16, 17, 18, 16, 19, 18, 20, 21, 22, 20, 23, 22};
 
 static GLuint loadTextureFromAsset(AAssetManager* assetManager, const char* filename) {
     AAsset* asset = AAssetManager_open(assetManager, filename, AASSET_MODE_STREAMING);
@@ -132,8 +195,10 @@ static GLuint loadTextureFromAsset(AAssetManager* assetManager, const char* file
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
+    // antialiasing
 //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -143,6 +208,35 @@ static GLuint loadTextureFromAsset(AAssetManager* assetManager, const char* file
     stbi_image_free(pixels);
 
     return textureID;
+}
+
+static GLuint loadNormalMapTexture(AAssetManager* assetManager, const char* filename) {
+    int TEXTURE_WIDTH = 256;
+    int TEXTURE_HEIGHT = 256;
+    int CHANNELS_PER_PIXEL = 3;
+    static GLuint textureId;
+    GLubyte * theTexture = (GLubyte *)malloc(sizeof(GLubyte) * TEXTURE_WIDTH * TEXTURE_HEIGHT * CHANNELS_PER_PIXEL);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    /* Generate a texture object. */
+    glGenTextures(1, &textureId);
+    /* Activate a texture. */
+    glActiveTexture(GL_TEXTURE0);
+    /* Bind the texture object. */
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    FILE * theFile = fopen("/data/data/site.pixio.pixio.opengl3d/files/normalMap256.raw", "r");
+    if(theFile == NULL)
+    {
+        LOGI("Failure to load the texture");
+        return 0;
+    }
+    fread(theTexture, TEXTURE_WIDTH * TEXTURE_HEIGHT * CHANNELS_PER_PIXEL, 1, theFile);
+    /* Load the texture. */
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, theTexture);
+    /* Set the filtering mode. */
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    free(theTexture);
+    return textureId;
 }
 
 static GLuint loadSimpleTexture() {
