@@ -34,9 +34,6 @@ private:
     float zFar = 100.0f;
     float angle = 0.0f;
     GLuint textureId = 0;
-//    GLfloat cubeVertices[24*3];
-//    GLfloat cubeNormalskdjfdkfjkdjfk[24*3];
-//    GLfloat textureCords[24*2];
 
     void update();
     bool setupGraphics(int width, int height);

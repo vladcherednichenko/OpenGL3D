@@ -22,10 +22,8 @@ bool TextureCubeRenderer::setupGraphics(int width, int height)
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, width, height);
 
-    //textureId = loadSimpleTexture();
-    textureId = loadNormalMapTexture(assetManager, "texture/normalMap256.raw");
+    textureId = loadNormalMapTexture(assetManager, "normalMap256.raw");
 
-    //return true;
     if(textureId == 0)
     {
         return false;
@@ -54,7 +52,7 @@ void TextureCubeRenderer::update() {
             biNormals,
             tangents);
     shader->setupUniforms(projectMatrix, modelViewMatrix);
-    angle += 1;
+    angle += 0.4;
     if (angle > 360)
     {
         angle -= 360;
