@@ -2,6 +2,7 @@ package site.pixio.graphics3dx
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.view.SurfaceView
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 
@@ -15,10 +16,10 @@ object Engine {
 
     }
 
-    fun getSurfaceView(context: Context): GLSurfaceView {
-        val glSurfaceView = GLSurfaceView(context)
-        glSurfaceView.apply {
-            setEGLContextClientVersion(3) // Use OpenGL ES 3.0
+    fun getSurfaceView(context: Context): SurfaceView {
+        val glSurfaceView = GameSurfaceView(context)
+//        glSurfaceView.apply {
+//            setEGLContextClientVersion(3) // Use OpenGL ES 3.0
 
 //            setEGLConfigChooser { egl, display ->
 //                val attribList = intArrayOf(
@@ -38,9 +39,9 @@ object Engine {
 //                configs[0]
 //            }
 
-            setRenderer(NativeRenderer())
-
-        }
+//            setRenderer(NativeRenderer())
+//
+//        }
 
 
         return glSurfaceView

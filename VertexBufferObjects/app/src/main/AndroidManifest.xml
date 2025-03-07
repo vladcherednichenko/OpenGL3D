@@ -16,7 +16,12 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:enableVrMode="@null"
+            android:resizeableActivity="true"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
             android:theme="@style/Theme.Opengl3D">
+            <meta-data android:name="android.app.supportsRefreshRateChanges" android:value="true"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

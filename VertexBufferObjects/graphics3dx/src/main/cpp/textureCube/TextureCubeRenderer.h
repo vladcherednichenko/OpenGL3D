@@ -23,6 +23,7 @@ public:
 private:
 
     AAssetManager* assetManager = nullptr;
+
     glm::mat4 projectMatrix = glm::mat4(0.0f);
     glm::mat4 modelViewMatrix = glm::mat4(0.0f);
     Shader* shader = nullptr;

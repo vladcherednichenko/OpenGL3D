@@ -1,21 +1,25 @@
 package site.pixio.pixio.opengl3d
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import android.speech.tts.TextToSpeech.EngineInfo
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.layoutDirection
 import site.pixio.graphics3dx.Engine
 import site.pixio.pixio.opengl3d.ui.theme.Opengl3DTheme
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -32,7 +36,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
+        val display = windowManager.defaultDisplay
+        val refreshRate = display.refreshRate
+        Log.d("FPS", "Current Refresh Rate: $refreshRate Hz")
+
         enableEdgeToEdge()
 
     }
+
 }
+
+

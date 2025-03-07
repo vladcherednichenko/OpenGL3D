@@ -9,6 +9,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "../Utils.h"
 #include <string>
+#include "FpsCounter.h"
 
 
 bool TextureCubeRenderer::setupGraphics(int width, int height)
@@ -41,6 +42,9 @@ bool TextureCubeRenderer::setupGraphics(int width, int height)
 
 }
 
+std::chrono::duration tick = std::chrono::milliseconds(30);
+auto lastUpdate = std::chrono::high_resolution_clock::now();
+
 void TextureCubeRenderer::update() {
 
     modelViewMatrix = glm::mat4(1.0f);
@@ -49,10 +53,16 @@ void TextureCubeRenderer::update() {
     modelViewMatrix = glm::rotate(modelViewMatrix, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 
     shader->setupUniforms(projectMatrix, modelViewMatrix);
-    angle += 1;
-    if (angle > 360)
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    if(currentTime - lastUpdate >= tick)
     {
-        angle -= 360;
+        lastUpdate = currentTime;
+        angle += 1;
+        if (angle > 360)
+        {
+            angle -= 360;
+        }
     }
 
 }
@@ -64,13 +74,11 @@ void TextureCubeRenderer::onDrawFrame() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
-}
-
-void TextureCubeRenderer::onSurfaceCreated() {
-
-
+    //LOGI("FPS: %f", FpsCounter::getInstance()->getFps());
 
 }
+
+void TextureCubeRenderer::onSurfaceCreated() {}
 
 void TextureCubeRenderer::onSurfaceChanged(int width, int height) {
 

@@ -1,7 +1,7 @@
 package site.pixio.graphics3dx
 
 import android.content.res.AssetManager
-
+import android.view.Surface
 
 
 object NativeBridge {
@@ -10,9 +10,10 @@ object NativeBridge {
         System.loadLibrary("native-lib")
     }
 
-    external fun initAssetManager(assetManager: AssetManager?)
-    external fun onSurfaceCreated()
-    external fun onDrawFrame()
-    external fun onSurfaceChanged(width: Int, height: Int)
+
+    external fun initAssetManager(assetManager: AssetManager)
+    external fun nativeInit(surface: Surface)
+    external fun nativeDestroy()
+    external fun nativeResize(width: Int, height: Int)
 
 }
