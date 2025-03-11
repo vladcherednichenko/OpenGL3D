@@ -11,25 +11,13 @@
 #include "textureCube/TextureCubeRenderer.h"
 #include "Utils.h"
 #include "textureCube/FpsCounter.h"
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
+#include <EGL/egl.h>
+#include <swappy/swappyGL.h>
+#include <swappy/swappyGL_extra.h>
 
 #define LOG_TAG "NativeBridge"
-
-#include <android/native_window.h>
-#include <android/native_window_jni.h>
-#include <EGL/egl.h>
-
-
-
-#include <jni.h>
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
-#include <android/log.h>
-#include <android/native_window.h>
-#include <android/native_window_jni.h>
-#include <thread>
-#include <chrono>
-
-#define  LOG_TAG    "OpenGL"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
@@ -39,10 +27,22 @@ static EGLSurface surface = EGL_NO_SURFACE;
 static ANativeWindow* window = nullptr;
 static bool running = false;
 
-Renderer *renderer = nullptr;
+enum DisplaySwapInterval : uint64_t {
+    /** 165 frames per second swap interval */
+    kDisplay_Swap_Interval_165FPS = 6060606L,
+    /** 120 frames per second swap interval */
+    kDisplay_Swap_Interval_120FPS = 8333333L,
+    /** 90 frames per second swap interval */
+    kDisplay_Swap_Interval_90FPS = 11111111L,
+    /** 60 frames per second swap interval */
+    kDisplay_Swap_Interval_60FPS = 16666667L,
+    /** 45 frames per second swap interval */
+    kDisplay_Swap_Interval_45FPS = 22222222L,
+    /** 30 frames per second swap interval */
+    kDisplay_Swap_Interval_30FPS = 33333333L
+};
 
-float FPS = 90.0f;
-std::chrono::duration frameTime = (1000.0f / FPS) * std::chrono::milliseconds(1);
+Renderer *renderer = nullptr;
 
 // Choose an EGL config
 EGLint attributes[] = {
@@ -58,20 +58,11 @@ EGLint attributes[] = {
 };
 EGLConfig config;
 EGLint numConfigs;
-
+EGLint format;
 EGLint contextAttrs[] = {
         EGL_CONTEXT_CLIENT_VERSION, 2,  // OpenGL ES 2.0
         EGL_NONE
 };
-
-void doFrame() {
-
-    renderer->onDrawFrame();
-
-    //LOGI("FPS: %f", FpsCounter::getInstance()->getFps());
-    eglSwapBuffers(display, surface);
-}
-
 
 void gameLoop() {
 
@@ -82,70 +73,49 @@ void gameLoop() {
 
     renderer->onSurfaceChanged(width, height);
 
-    eglSwapInterval(display, 0);
-
     while (running) {
 
-        doFrame();
+        renderer->onDrawFrame();
+        SwappyGL_swap(display, surface);
 
-        // Sleep to achieve target FPS
-        std::this_thread::sleep_for(frameTime);
     }
 }
 
 
-
-
 extern "C"
 JNIEXPORT void JNICALL
-Java_site_pixio_graphics3dx_NativeBridge_nativeInit(JNIEnv *env, jobject obj, jobject surfaceObj) {
+Java_site_pixio_graphics3dx_NativeBridge_nativeInit(JNIEnv *env, jobject obj, jobject activity, jobject surfaceObj) {
     if (window) {
         ANativeWindow_release(window);
     }
 
     window = ANativeWindow_fromSurface(env, surfaceObj);
-    if (!window) {
-        LOGE("Failed to get native window!");
+
+    // Get JavaVM reference (optional)
+    JavaVM *vm;
+    env->GetJavaVM(&vm);
+
+    // Store the activity reference globally if needed
+    jobject globalActivity = env->NewGlobalRef(activity);
+
+    // Initialize Swappy with jactivity
+    SwappyGL_init(env, globalActivity);
+    SwappyGL_setSwapIntervalNS(kDisplay_Swap_Interval_120FPS);
+    SwappyGL_setAutoSwapInterval(false);
+
+    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (!eglInitialize(display, nullptr, nullptr)) {
+        LOGE("Failed to initialize EGL!");
         return;
     }
-    LOGI("ANativeWindow acquired successfully.");
+    eglChooseConfig(display, attributes, &config, 1, &numConfigs);
 
-    if (display == EGL_NO_DISPLAY) {
-        display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-        if (display == EGL_NO_DISPLAY || !eglInitialize(display, nullptr, nullptr)) {
-            LOGE("EGL Display initialization failed!");
-            return;
-        }
-    }
-
-    EGLint numConfigs;
-    if (!eglChooseConfig(display, attributes, &config, 1, &numConfigs) || numConfigs == 0) {
-        LOGE("Failed to choose a valid EGL config!");
-        return;
-    }
-
-    EGLint format;
     eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
-    if (context == EGL_NO_CONTEXT) {
-        context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttrs);
-        if (context == EGL_NO_CONTEXT) {
-            LOGE("Failed to create EGL context!");
-            return;
-        }
-    }
-
-    if (surface != EGL_NO_SURFACE) {
-        eglDestroySurface(display, surface);
-    }
-
+    context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttrs);
     surface = eglCreateWindowSurface(display, config, window, nullptr);
-    if (surface == EGL_NO_SURFACE) {
-        EGLint error = eglGetError();
-        LOGE("Failed to create EGL surface! Error: 0x%X", error);
-        return;
-    }
+
     LOGI("EGL surface created successfully.");
 
 
@@ -180,10 +150,7 @@ Java_site_pixio_graphics3dx_NativeBridge_nativeDestroy(JNIEnv *env, jobject obj)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_site_pixio_graphics3dx_NativeBridge_nativeResize(JNIEnv *env, jobject obj, jint width, jint height) {
-    //renderer->onSurfaceChanged(width, height);
-}
-
+Java_site_pixio_graphics3dx_NativeBridge_nativeResize(JNIEnv *env, jobject obj, jint width, jint height) {}
 
 
 extern "C"
@@ -194,33 +161,6 @@ Java_site_pixio_graphics3dx_NativeBridge_initAssetManager(JNIEnv *env, jobject i
 
 }
 
-//extern "C"
-//JNIEXPORT void JNICALL
-//Java_site_pixio_graphics3dx_NativeBridge_onSurfaceCreated(JNIEnv * env, jobject obj)
-//{
-//
-//    renderer->onSurfaceCreated();
-//
-//}
-
-//extern "C"
-//JNIEXPORT void JNICALL
-//Java_site_pixio_graphics3dx_NativeBridge_onSurfaceChanged(JNIEnv * env, jobject obj, jint width, jint height)
-//{
-//
-//    renderer->onSurfaceChanged(width, height);
-//
-//}
-
-
-//extern "C"
-//JNIEXPORT void JNICALL
-//Java_site_pixio_graphics3dx_NativeBridge_onDrawFrame(JNIEnv * env, jobject obj)
-//{
-//
-//    renderer->onDrawFrame();
-//
-//}
 
 
 

@@ -1,5 +1,6 @@
 package site.pixio.graphics3dx
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.opengl.EGL14
@@ -14,14 +15,14 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 
-class GameSurfaceView(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
+class GameSurfaceView(val activity: Activity) : SurfaceView(activity), SurfaceHolder.Callback {
 
     init {
         holder.addCallback(this)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        NativeBridge.nativeInit(holder.surface)  // Pass Surface to C++
+        NativeBridge.nativeInit(activity, holder.surface)  // Pass Surface to C++
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {

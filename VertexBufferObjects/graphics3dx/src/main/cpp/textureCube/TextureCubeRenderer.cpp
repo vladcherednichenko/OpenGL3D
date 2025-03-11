@@ -58,7 +58,7 @@ void TextureCubeRenderer::update() {
     if(currentTime - lastUpdate >= tick)
     {
         lastUpdate = currentTime;
-        angle += 1;
+        angle += 0.5;
         if (angle > 360)
         {
             angle -= 360;
@@ -74,7 +74,7 @@ void TextureCubeRenderer::onDrawFrame() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
-    //LOGI("FPS: %f", FpsCounter::getInstance()->getFps());
+    LOGI("FPS: %f", FpsCounter::getInstance()->getFps());
 
 }
 

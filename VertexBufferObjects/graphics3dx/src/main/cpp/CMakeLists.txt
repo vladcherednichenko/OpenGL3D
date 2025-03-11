@@ -30,10 +30,13 @@ find_library(
         GLESv3-lib GLESv3
 )
 
+find_package(games-frame-pacing REQUIRED CONFIG)
+
 target_link_libraries(
         native-lib  # Your native library target
         ${log-lib}  # Android logging library
         ${android-lib}  # Android native API
         ${EGL-lib}  # EGL library (fixes your error)
         ${GLESv3-lib}  # OpenGL ES 3.0 library
+        games-frame-pacing::swappy_static
 )

@@ -1,5 +1,6 @@
 package site.pixio.graphics3dx
 
+import android.app.Activity
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.view.SurfaceView
@@ -16,8 +17,8 @@ object Engine {
 
     }
 
-    fun getSurfaceView(context: Context): SurfaceView {
-        val glSurfaceView = GameSurfaceView(context)
+    fun getSurfaceView(activity: Activity): SurfaceView {
+        val glSurfaceView = GameSurfaceView(activity)
 //        glSurfaceView.apply {
 //            setEGLContextClientVersion(3) // Use OpenGL ES 3.0
 

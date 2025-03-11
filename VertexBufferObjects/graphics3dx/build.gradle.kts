@@ -25,8 +25,34 @@ android {
     defaultConfig {
         externalNativeBuild {
             cmake {
-                //cppFlags ""
+                arguments ("-DANDROID_STL=c++_static")
             }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+//            'proguard-rules.pro',
+//            '$playcoreDir/proguard/common.pgcfg',
+//            '$playcoreDir/proguard/per-feature-proguard-files'
+            externalNativeBuild {
+                cmake {
+                    arguments ("-DANDROID_STL=c++_shared")
+                }
+            }
+        }
+        debug {
+            externalNativeBuild {
+                isMinifyEnabled = false
+//                proguardFiles getDefaultProguardFile('proguard-android.txt'),
+//                'proguard-rules.pro'
+                cmake {
+                    arguments ("-DANDROID_STL=c++_shared")
+                }
+            }
+            multiDexEnabled = true
         }
     }
 
@@ -36,11 +62,16 @@ android {
         }
     }
 
+    buildFeatures {
+        prefab = true
+    }
+
 }
 
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
+    implementation ("androidx.games:games-frame-pacing:2.1.2")
 
 }
 
