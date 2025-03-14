@@ -1,13 +1,23 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 
+set(GAME_SOURCE)
+
+# start of auto-generated source files list, do not edit
+
+set(GAME_SOURCE
+    native-lib.cpp
+    textureCube/FpsCounter.cpp
+    textureCube/shaders/Shader.cpp
+    textureCube/TextureCubeRenderer.cpp
+    )
+
+# end of auto-generated source files list
+
 # Define the library to be built
 add_library(native-lib SHARED
-            textureCube/shaders/Shader.cpp
-            textureCube/TextureCubeRenderer.cpp
-            textureCube/FpsCounter.cpp
-            native-lib.cpp
-)
+        ${GAME_SOURCE}
+        )
 
 # Specify your project-specific include directories
 include_directories(native-lib ${CMAKE_SOURCE_DIR}/../../../include)

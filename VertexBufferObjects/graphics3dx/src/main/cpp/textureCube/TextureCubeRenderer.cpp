@@ -74,8 +74,6 @@ void TextureCubeRenderer::onDrawFrame() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 
-    LOGI("FPS: %f", FpsCounter::getInstance()->getFps());
-
 }
 
 void TextureCubeRenderer::onSurfaceCreated() {}

@@ -2,22 +2,18 @@
 #include <GLES3/gl3.h>
 #include <android/log.h>
 #include <thread>
-#include <chrono>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <android/asset_manager_jni.h>
-#include "glm/gtc/type_ptr.hpp"
 #include "Renderer.h"
 #include "textureCube/TextureCubeRenderer.h"
-#include "Utils.h"
 #include "textureCube/FpsCounter.h"
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <EGL/egl.h>
 #include <swappy/swappyGL.h>
 #include <swappy/swappyGL_extra.h>
+#include "Utils.h"
+#include "Const.h"
 
-#define LOG_TAG "NativeBridge"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
@@ -76,6 +72,11 @@ void gameLoop() {
     while (running) {
 
         renderer->onDrawFrame();
+
+        if (LOG_FPS) {
+            LOGI("FPS: %f", FpsCounter::getInstance()->getFps());
+        }
+
         SwappyGL_swap(display, surface);
 
     }
